@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "85827409216",
+    "project_id": "newfoodfleet",
+    "storage_bucket": "newfoodfleet.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:85827409216:android:63bea1db80c3ee8ffb16a5",
+        "android_client_info": {
+          "package_name": "com.example.new_foodfleet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5IM1CwuTdiRj88X34JgWnZxwuUiT1XY8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

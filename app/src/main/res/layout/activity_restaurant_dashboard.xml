@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/bg_dark"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="Restaurant Panel"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        app:cardBackgroundColor="@color/card"
+        app:cardCornerRadius="16dp">
+
+        <Button
+            android:id="@+id/btnAddFood"
+            android:text="Add Food Item"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/primary"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"/>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/card"
+        app:cardCornerRadius="16dp">
+
+    <Button
+        android:id="@+id/btnViewOrders"
+        android:text="View Orders"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/primary"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"/>
+</androidx.cardview.widget.CardView>
+    </LinearLayout>

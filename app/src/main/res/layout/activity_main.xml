@@ -19,7 +19,7 @@
 
     <Button
         android:id="@+id/btnRest"
-        android:text="Store Sign Up"
+        android:text=" Restaurant Sign Up"
         android:textColor="@color/white"
         android:backgroundTint="@color/primary"
         android:layout_width="match_parent"

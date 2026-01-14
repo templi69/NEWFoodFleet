@@ -18,7 +18,7 @@
 
     <EditText
         android:id="@+id/etRestName"
-        android:hint="Store Name"
+        android:hint="Restaurant Name"
         android:textColor="@color/white"
         android:textColorHint="#AAAAAA"
         android:backgroundTint="@color/primary"

@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="bg_dark">#1F1B3A</color>
+    <color name="primary">#7B2CBF</color>
+    <color name="primary_dark">#5A189A</color>
+    <color name="white">#FFFFFF</color>
+    <color name="card">#2A2558</color>
 </resources>

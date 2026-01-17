@@ -15,5 +15,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnRest).setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, RestaurantSignupActivity.class))
         );
+        findViewById(R.id.btnRest).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, UserSignup.class))
+        );
     }
 }

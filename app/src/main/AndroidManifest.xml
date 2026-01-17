@@ -10,33 +10,40 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NEWFoodFleet">
-
-
+        <activity
+            android:name=".RiderDashboard"
+            android:exported="false" />
+        <activity
+            android:name=".RiderSignup"
+            android:exported="false" />
+        <activity
+            android:name=".RiderLogin"
+            android:exported="false" />
+        <activity
+            android:name=".ui.login.LoginRiderActivity"
+            android:exported="false"
+            android:label="@string/title_activity_login_rider" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-       
         <activity
             android:name=".RestaurantSignupActivity"
             android:exported="false" />
-
         <activity
             android:name=".RestaurantDashboardActivity"
             android:exported="false" />
-
         <activity
             android:name=".RestaurantOrderActivity"
             android:exported="false" />
-
         <activity
             android:name=".AddFoodActivity"
             android:exported="false" />
-
     </application>
+
 </manifest>

@@ -26,5 +26,21 @@
         android:layout_height="55dp"
         android:layout_marginBottom="12dp"/>
 
+    <Button
+        android:id="@+id/btnRider"
+        android:text=" Rider Sign Up"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/primary"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginBottom="12dp"/>
 
+    <Button
+        android:id="@+id/btnUser"
+        android:text=" User Sign Up"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/primary"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginBottom="12dp"/>
 </LinearLayout>

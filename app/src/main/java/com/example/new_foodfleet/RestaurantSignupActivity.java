@@ -39,13 +39,13 @@ public class RestaurantSignupActivity extends AppCompatActivity {
             String email = etEmail.getText().toString().trim();
             String pass = etPassword.getText().toString().trim();
 
-            // Validation
+
             if (name.isEmpty() || email.isEmpty() || pass.isEmpty() || pass.length() < 6) {
                 Toast.makeText(this, "Please fill all fields correctly", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Firebase Signup
+
             auth.createUserWithEmailAndPassword(email, pass)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -53,7 +53,7 @@ public class RestaurantSignupActivity extends AppCompatActivity {
                             if (user != null) {
                                 String uid = user.getUid();
 
-                                // Save to Realtime Database
+
                                 db.child("Users").child(uid).child("role").setValue("restaurant");
                                 db.child("Restaurants").child(uid).child("name").setValue(name)
                                         .addOnCompleteListener(dbTask -> {

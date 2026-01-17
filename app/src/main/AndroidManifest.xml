@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NEWFoodFleet">
         <activity
+            android:name=".UserSignup"
+            android:exported="false" />
+        <activity
             android:name=".RiderDashboard"
             android:exported="false" />
         <activity

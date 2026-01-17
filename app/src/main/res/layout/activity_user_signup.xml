@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="@color/bg_dark"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="User Registration"
+        android:textSize="26sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/etRestName"
+        android:hint="User Name"
+        android:textColor="@color/white"
+        android:textColorHint="#AAAAAA"
+        android:backgroundTint="@color/primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/etEmail"
+        android:hint="Email"
+        android:textColor="@color/white"
+        android:textColorHint="#AAAAAA"
+        android:backgroundTint="@color/primary"
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/etPassword"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:textColor="@color/white"
+        android:textColorHint="#AAAAAA"
+        android:backgroundTint="@color/primary"
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
+    <Button
+        android:id="@+id/btnUserSignup"
+        android:text="CREATE ACCOUNT"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/primary"
+        android:layout_marginTop="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+
+
+</LinearLayout>

@@ -1,61 +1,53 @@
 package com.example.new_foodfleet;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.*;
 
 import java.util.ArrayList;
 
 public class RestaurantDashboardActivity extends AppCompatActivity {
 
-    private ListView listMenu;
-    private ArrayList<String> menuList;
-    private ArrayAdapter<String> adapter;
+    ListView listMenu;
+    Button btnAddFood, btnViewOrders;
+    ArrayList<String> menuList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_dashboard);
 
+        // Find views
         listMenu = findViewById(R.id.listMenu);
+        btnAddFood = findViewById(R.id.btnAddFood);
+        btnViewOrders = findViewById(R.id.btnViewOrders);
 
-        menuList = new ArrayList<>();
-        adapter = new ArrayAdapter<>(
+        // Setup adapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_list_item_1,
                 menuList
         );
-
         listMenu.setAdapter(adapter);
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        // Get restaurant ID
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        if (currentUser == null) {
-            Toast.makeText(this, "Please login first", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
+        // Load menu from Firebase
         DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("Restaurants")
-                .child(currentUser.getUid())
+                .child(uid)
                 .child("menu");
 
         ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onDataChange(DataSnapshot snapshot) {
                 menuList.clear();
 
                 if (snapshot.exists()) {
@@ -64,22 +56,32 @@ public class RestaurantDashboardActivity extends AppCompatActivity {
                         String price = ds.child("price").getValue(String.class);
 
                         if (name != null && price != null) {
-                            menuList.add(name + " - Rs" + price);
+                            menuList.add(name + " - ₹" + price);
                         }
                     }
-                } else {
-                    menuList.add("No menu items found");
+                }
+
+                if (menuList.isEmpty()) {
+                    menuList.add("No items in menu");
                 }
 
                 adapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onCancelled(DatabaseError error) {
                 Toast.makeText(RestaurantDashboardActivity.this,
-                        "Error: " + error.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                        "Error loading menu", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        // Button click listeners
+        btnAddFood.setOnClickListener(v -> {
+            startActivity(new Intent(this, AddFoodActivity.class));
+        });
+
+        btnViewOrders.setOnClickListener(v -> {
+            startActivity(new Intent(this, RestaurantOrderActivity.class));
         });
     }
 }

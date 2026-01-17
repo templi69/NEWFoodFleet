@@ -1,10 +1,7 @@
 package com.example.new_foodfleet;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,21 +21,15 @@ import java.util.ArrayList;
 public class RestaurantDashboardActivity extends AppCompatActivity {
 
     private ListView listMenu;
-    private Button btnAddFood, btnViewOrders;
     private ArrayList<String> menuList;
     private ArrayAdapter<String> adapter;
-    private DatabaseReference ref;
-    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_dashboard);
 
-        // Initialize ALL views
         listMenu = findViewById(R.id.listMenu);
-        btnAddFood = findViewById(R.id.btnAddFood);
-        btnViewOrders = findViewById(R.id.btnViewOrders);
 
         menuList = new ArrayList<>();
         adapter = new ArrayAdapter<>(
@@ -49,28 +40,19 @@ public class RestaurantDashboardActivity extends AppCompatActivity {
 
         listMenu.setAdapter(adapter);
 
-        // Get current user
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
         if (currentUser == null) {
             Toast.makeText(this, "Please login first", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        uid = currentUser.getUid();
-
-        ref = FirebaseDatabase.getInstance()
+        DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("Restaurants")
-                .child(uid)
+                .child(currentUser.getUid())
                 .child("menu");
 
-        loadMenu();
-
-        // Add button click listeners
-        setupButtonListeners();
-    }
-
-    private void loadMenu() {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -82,11 +64,11 @@ public class RestaurantDashboardActivity extends AppCompatActivity {
                         String price = ds.child("price").getValue(String.class);
 
                         if (name != null && price != null) {
-                            menuList.add(name + " - ₹" + price);
+                            menuList.add(name + " - Rs" + price);
                         }
                     }
                 } else {
-                    menuList.add("No menu items found. Add your first item!");
+                    menuList.add("No menu items found");
                 }
 
                 adapter.notifyDataSetChanged();
@@ -95,34 +77,9 @@ public class RestaurantDashboardActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(RestaurantDashboardActivity.this,
-                        "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        "Error: " + error.getMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void setupButtonListeners() {
-        // Add Food Button Click
-        if (btnAddFood != null) {
-            btnAddFood.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Open AddFoodActivity
-                    Intent intent = new Intent(RestaurantDashboardActivity.this, AddFoodActivity.class);
-                    startActivity(intent);
-                }
-            });
-        }
-
-        // View Orders Button Click
-        if (btnViewOrders != null) {
-            btnViewOrders.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Open RestaurantOrderActivity
-                    Intent intent = new Intent(RestaurantDashboardActivity.this, RestaurantOrderActivity.class);
-                    startActivity(intent);
-                }
-            });
-        }
     }
 }

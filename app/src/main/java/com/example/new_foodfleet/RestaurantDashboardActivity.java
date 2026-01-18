@@ -56,7 +56,7 @@ public class RestaurantDashboardActivity extends AppCompatActivity {
                         String price = ds.child("price").getValue(String.class);
 
                         if (name != null && price != null) {
-                            menuList.add(name + " - ₹" + price);
+                            menuList.add(name + " - Rs " + price);
                         }
                     }
                 }

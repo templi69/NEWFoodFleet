@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <TextView
         android:text="Restaurant Panel"
         android:textSize="24sp"
@@ -49,7 +48,6 @@
             android:layout_height="60dp"/>
     </androidx.cardview.widget.CardView>
 
-
     <TextView
         android:text="My Menu"
         android:textColor="@color/white"
@@ -68,4 +66,15 @@
         android:layout_weight="1"
         android:divider="#40FFFFFF"
         android:dividerHeight="1dp"/>
+
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:text="Logout"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/primary_dark"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="15dp"/>
+
 </LinearLayout>

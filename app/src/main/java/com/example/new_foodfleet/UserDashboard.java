@@ -20,11 +20,11 @@ import java.util.ArrayList;
 
 
 public class UserDashboard extends AppCompatActivity {
-
     Button btnViewCart, btnLogout;
     ListView listMenu;
 
-    ArrayList<String> restaurantList;
+    ArrayList<String> restaurantNames = new ArrayList<>();
+    ArrayList<String> restaurantIds = new ArrayList<>();
     ArrayAdapter<String> adapter;
 
     DatabaseReference restaurantRef;
@@ -40,11 +40,10 @@ public class UserDashboard extends AppCompatActivity {
         listMenu = findViewById(R.id.listMenu);
 
         // List setup
-        restaurantList = new ArrayList<>();
         adapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_list_item_1,
-                restaurantList
+                restaurantNames
         );
         listMenu.setAdapter(adapter);
 
@@ -56,21 +55,18 @@ public class UserDashboard extends AppCompatActivity {
         restaurantRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                restaurantList.clear();
+                restaurantNames.clear();
+                restaurantIds.clear();
 
                 for (DataSnapshot data : snapshot.getChildren()) {
 
-                    String restaurantName;
+                    String id = data.getKey();
+                    String name = data.child("name").getValue(String.class);
 
-                    // Case 1: restaurant stored as key
-                    restaurantName = data.getKey();
-
-                    // Case 2: restaurant stored with "name" field
-                    if (data.child("name").exists()) {
-                        restaurantName = data.child("name").getValue(String.class);
+                    if (id != null && name != null) {
+                        restaurantIds.add(id);
+                        restaurantNames.add(name);
                     }
-
-                    restaurantList.add(restaurantName);
                 }
 
                 adapter.notifyDataSetChanged();
@@ -86,16 +82,16 @@ public class UserDashboard extends AppCompatActivity {
 
         // List item click
         listMenu.setOnItemClickListener((parent, view, position, id) -> {
-            String selectedRestaurant = restaurantList.get(position);
-            Toast.makeText(this,
-                    selectedRestaurant + " selected",
-                    Toast.LENGTH_SHORT).show();
 
+            // Get clicked restaurant id and name
+            String restaurantId = restaurantIds.get(position);
+            String restaurantName = restaurantNames.get(position);
 
-             Intent intent = new Intent(this, user_resturantmenue.class);
-            // intent.putExtra("restaurant", selectedRestaurant);
-            // startActivity(intent);
-
+            // Send data using intent
+            Intent intent = new Intent(UserDashboard.this, user_resturantmenue.class);
+            intent.putExtra("restaurantId", restaurantId);
+            intent.putExtra("restaurantName", restaurantName);
+            startActivity(intent);
         });
 
         // View Cart button

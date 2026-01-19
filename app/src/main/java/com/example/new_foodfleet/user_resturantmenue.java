@@ -2,26 +2,26 @@ package com.example.new_foodfleet;
 
 
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.new_foodfleet.ui.login.MenueItemModel;
 import com.google.firebase.database.*;
 
 import java.util.ArrayList;
 
 public class user_resturantmenue extends AppCompatActivity {
-
     TextView tvRestaurantName;
     ListView listMenu;
 
-    ArrayList<String> menuList = new ArrayList<>();
-    ArrayAdapter<String> adapter;
+    ArrayList<MenueItemModel> menuList = new ArrayList<>();
+    MenueAdapter adapter;
 
     DatabaseReference menuRef;
+    String restaurantId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,19 +31,14 @@ public class user_resturantmenue extends AppCompatActivity {
         tvRestaurantName = findViewById(R.id.tvRestaurantName);
         listMenu = findViewById(R.id.listMenu);
 
-        String restaurantId = getIntent().getStringExtra("restaurantId");
+        restaurantId = getIntent().getStringExtra("restaurantId");
         String restaurantName = getIntent().getStringExtra("restaurantName");
 
         tvRestaurantName.setText(restaurantName);
 
-        adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                menuList
-        );
+        adapter = new MenueAdapter(this, menuList, restaurantId);
         listMenu.setAdapter(adapter);
 
-        // 🔥 CORRECT MENU PATH
         menuRef = FirebaseDatabase.getInstance()
                 .getReference("Restaurants")
                 .child(restaurantId)
@@ -63,12 +58,8 @@ public class user_resturantmenue extends AppCompatActivity {
                     String price = ds.child("price").getValue(String.class);
 
                     if (name != null && price != null) {
-                        menuList.add(name + " - Rs " + price);
+                        menuList.add(new MenueItemModel(name, price, 0));
                     }
-                }
-
-                if (menuList.isEmpty()) {
-                    menuList.add("No items available");
                 }
 
                 adapter.notifyDataSetChanged();
@@ -77,9 +68,9 @@ public class user_resturantmenue extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError error) {
                 Toast.makeText(user_resturantmenue.this,
-                        "Failed to load menu",
-                        Toast.LENGTH_SHORT).show();
+                        "Failed to load menu", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 }

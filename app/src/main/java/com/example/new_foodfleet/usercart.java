@@ -12,7 +12,6 @@ import com.google.firebase.database.*;
 
 import java.util.ArrayList;
 
-
 public class usercart extends AppCompatActivity {
 
     ListView listCart;
@@ -31,6 +30,7 @@ public class usercart extends AppCompatActivity {
         listCart.setAdapter(adapter);
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         cartRef = FirebaseDatabase.getInstance()
                 .getReference("Users")
                 .child(userId)
@@ -39,7 +39,7 @@ public class usercart extends AppCompatActivity {
         loadCart();
     }
 
-    private void loadCart() {
+    void loadCart() {
         cartRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -49,10 +49,16 @@ public class usercart extends AppCompatActivity {
                     for (DataSnapshot item : rest.getChildren()) {
 
                         String name = item.child("itemName").getValue(String.class);
-                        String price = item.child("price").getValue(String.class);
-                        String qty = item.child("qty").getValue(String.class);
 
-                        cartItems.add(name + " x" + qty + " = Rs " + (Integer.parseInt(price) * Integer.parseInt(qty)));
+                        // 🔥 FIX: Read price and qty as Long
+                        Long priceLong = item.child("price").getValue(Long.class);
+                        Long qtyLong = item.child("qty").getValue(Long.class);
+
+                        if (name == null || priceLong == null || qtyLong == null) continue;
+
+                        long total = priceLong * qtyLong;
+
+                        cartItems.add(name + " x" + qtyLong + " = Rs " + total);
                     }
                 }
 
@@ -66,4 +72,3 @@ public class usercart extends AppCompatActivity {
         });
     }
 }
-

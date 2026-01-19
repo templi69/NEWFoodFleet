@@ -54,9 +54,9 @@ public class user_resturantmenue extends AppCompatActivity {
 
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     String name = ds.child("itemName").getValue(String.class);
-                    String price = ds.child("price").getValue(String.class);
+                    long price = ds.child("price").getValue(long.class);
 
-                    if (name != null && price != null) {
+                    if (name != null && price != 0) {
                         menuList.add(new MenueItemModel(name, price, 0));
                     }
                 }

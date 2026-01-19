@@ -30,7 +30,6 @@ public class usercart extends AppCompatActivity {
         listCart.setAdapter(adapter);
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
         cartRef = FirebaseDatabase.getInstance()
                 .getReference("Users")
                 .child(userId)
@@ -50,11 +49,21 @@ public class usercart extends AppCompatActivity {
 
                         String name = item.child("itemName").getValue(String.class);
 
-                        // 🔥 FIX: Read price and qty as Long
-                        Long priceLong = item.child("price").getValue(Long.class);
-                        Long qtyLong = item.child("qty").getValue(Long.class);
+                        // 🔥 READ AS STRING FIRST
+                        String priceStr = item.child("price").getValue(String.class);
+                        String qtyStr = item.child("qty").getValue(String.class);
 
-                        if (name == null || priceLong == null || qtyLong == null) continue;
+                        if (name == null || priceStr == null || qtyStr == null) continue;
+
+                        long priceLong;
+                        long qtyLong;
+
+                        try {
+                            priceLong = Long.parseLong(priceStr);
+                            qtyLong = Long.parseLong(qtyStr);
+                        } catch (Exception e) {
+                            continue;
+                        }
 
                         long total = priceLong * qtyLong;
 

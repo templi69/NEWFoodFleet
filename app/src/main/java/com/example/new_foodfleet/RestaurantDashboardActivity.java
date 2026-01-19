@@ -2,22 +2,125 @@ package com.example.new_foodfleet;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.*;
+
+import java.util.ArrayList;
+
 public class RestaurantDashboardActivity extends AppCompatActivity {
+
+    ListView listMenu;
+    Button btnAddFood, btnViewOrders, btnLogout;
+
+    ArrayList<String> menuList = new ArrayList<>();
+    ArrayAdapter<String> adapter;
+
+    FirebaseAuth auth;
+    DatabaseReference menuRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_dashboard);
 
-        findViewById(R.id.btnAddFood).setOnClickListener(v ->
+        // Firebase auth
+        auth = FirebaseAuth.getInstance();
+
+        // Safety check
+        if (auth.getCurrentUser() == null) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+            return;
+        }
+
+        String uid = auth.getCurrentUser().getUid();
+
+        // Find views
+        listMenu = findViewById(R.id.listMenu);
+        btnAddFood = findViewById(R.id.btnAddFood);
+        btnViewOrders = findViewById(R.id.btnViewOrders);
+        btnLogout = findViewById(R.id.btnLogout);
+
+        // Adapter
+        adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                menuList
+        );
+        listMenu.setAdapter(adapter);
+
+        // Firebase reference
+        menuRef = FirebaseDatabase.getInstance()
+                .getReference("Restaurants")
+                .child(uid)
+                .child("menu");
+
+        // Load menu
+        loadMenu();
+
+        // Add food
+        btnAddFood.setOnClickListener(v ->
                 startActivity(new Intent(this, AddFoodActivity.class))
         );
 
-        findViewById(R.id.btnViewOrders).setOnClickListener(v ->
+        // View orders
+        btnViewOrders.setOnClickListener(v ->
                 startActivity(new Intent(this, RestaurantOrderActivity.class))
         );
+
+        // Logout
+        btnLogout.setOnClickListener(v -> {
+            auth.signOut();
+
+            Intent intent = new Intent(
+                    RestaurantDashboardActivity.this,
+                    MainActivity.class
+            );
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
+    }
+
+    private void loadMenu() {
+        menuRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                menuList.clear();
+
+                if (snapshot.exists()) {
+                    for (DataSnapshot ds : snapshot.getChildren()) {
+                        String name = ds.child("itemName").getValue(String.class);
+                        String price = ds.child("price").getValue(String.class);
+
+                        if (name != null && price != null) {
+                            menuList.add(name + " - Rs " + price);
+                        }
+                    }
+                }
+
+                if (menuList.isEmpty()) {
+                    menuList.add("No items in menu");
+                }
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Toast.makeText(
+                        RestaurantDashboardActivity.this,
+                        "Failed to load menu",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
     }
 }

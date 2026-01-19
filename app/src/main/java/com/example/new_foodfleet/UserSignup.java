@@ -62,7 +62,7 @@ public class UserSignup extends AppCompatActivity {
 
                                 db.child("Users").child(uid).child("role").setValue("user");
                                 db.child("Users").child(uid).child("name").setValue(userName);
-                                db.child("Users").child(uid).child("phonenum").setValue(userPhoneNumber);
+                                db.child("Users").child(uid).child("phonenum").setValue(userPhoneNumber)
                                         .addOnCompleteListener(dbTask -> {
                                             if (dbTask.isSuccessful()) {
                                                 Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show();

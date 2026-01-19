@@ -15,6 +15,9 @@
             android:name=".usercart"
             android:exported="false" />
         <activity
+            android:name=".UserSignup"
+            android:exported="false" />
+        <activity
             android:name=".MenueItemModel"
             android:exported="false"
             tools:ignore="Instantiatable" />

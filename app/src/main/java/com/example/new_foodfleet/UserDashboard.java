@@ -50,7 +50,7 @@ public class UserDashboard extends AppCompatActivity {
 
         // Firebase reference
         restaurantRef = FirebaseDatabase.getInstance()
-                .getReference("restaurant");
+                .getReference("Restaurants");
 
         // Fetch restaurants from Firebase
         restaurantRef.addValueEventListener(new ValueEventListener() {

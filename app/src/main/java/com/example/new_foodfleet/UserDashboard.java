@@ -96,8 +96,7 @@ public class UserDashboard extends AppCompatActivity {
 
         // View Cart button
         btnViewCart.setOnClickListener(v ->
-                Toast.makeText(this, "View Cart clicked", Toast.LENGTH_SHORT).show()
-        );
+                startActivity(new Intent(UserDashboard.this, usercart.class)) );
 
         // Logout button
         btnLogout.setOnClickListener(v -> {

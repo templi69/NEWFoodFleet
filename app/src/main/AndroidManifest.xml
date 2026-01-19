@@ -11,7 +11,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NEWFoodFleet">
         <activity
-            android:name=".item_menue"
+            android:name=".usercart"
+            android:exported="false" />
+        <activity
+            android:name=".MenueItemModel"
             android:exported="false" />
         <activity
             android:name=".user_resturantmenue"

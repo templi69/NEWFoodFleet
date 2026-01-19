@@ -1,4 +1,4 @@
-package com.example.new_foodfleet.ui.login;
+package com.example.new_foodfleet;
 
 public class MenueItemModel {
 

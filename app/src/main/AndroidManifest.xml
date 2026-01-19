@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NEWFoodFleet">
         <activity
+            android:name=".user_resturantmenue"
+            android:exported="false" />
+        <activity
             android:name=".UserDashboard"
             android:exported="false" />
         <activity

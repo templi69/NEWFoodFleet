@@ -91,10 +91,11 @@ public class UserDashboard extends AppCompatActivity {
                     selectedRestaurant + " selected",
                     Toast.LENGTH_SHORT).show();
 
-            // Example:
-            // Intent intent = new Intent(this, MenuActivity.class);
+
+             Intent intent = new Intent(this, user_resturantmenue.class);
             // intent.putExtra("restaurant", selectedRestaurant);
             // startActivity(intent);
+
         });
 
         // View Cart button

@@ -48,24 +48,20 @@ public class usercart extends AppCompatActivity {
                     for (DataSnapshot item : rest.getChildren()) {
 
                         String name = item.child("itemName").getValue(String.class);
-
-                        // 🔥 READ AS STRING FIRST
                         String priceStr = item.child("price").getValue(String.class);
-                        String qtyStr = item.child("qty").getValue(String.class);
+                        Long qtyLong = item.child("qty").getValue(Long.class);
 
-                        if (name == null || priceStr == null || qtyStr == null) continue;
+                        if (name == null || priceStr == null || qtyLong == null) continue;
 
-                        long priceLong;
-                        long qtyLong;
-
+                        // ✅ Convert price string to long safely
+                        long price = 0;
                         try {
-                            priceLong = Long.parseLong(priceStr);
-                            qtyLong = Long.parseLong(qtyStr);
+                            price = Long.parseLong(priceStr);
                         } catch (Exception e) {
-                            continue;
+                            price = 0;
                         }
 
-                        long total = priceLong * qtyLong;
+                        long total = price * qtyLong;
 
                         cartItems.add(name + " x" + qtyLong + " = Rs " + total);
                     }

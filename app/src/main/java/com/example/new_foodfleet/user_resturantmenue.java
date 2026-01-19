@@ -1,6 +1,5 @@
 package com.example.new_foodfleet;
 
-
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -13,6 +12,7 @@ import com.google.firebase.database.*;
 import java.util.ArrayList;
 
 public class user_resturantmenue extends AppCompatActivity {
+
     TextView tvRestaurantName;
     ListView listMenu;
 
@@ -54,10 +54,11 @@ public class user_resturantmenue extends AppCompatActivity {
 
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     String name = ds.child("itemName").getValue(String.class);
-                    long price = ds.child("price").getValue(long.class);
+                    String priceStr = ds.child("price").getValue(String.class);
 
-                    if (name != null && price != 0) {
-                        menuList.add(new MenueItemModel(name, price, 0));
+                    // ✅ Correct: price is String in Firebase
+                    if (name != null && priceStr != null) {
+                        menuList.add(new MenueItemModel(name, priceStr, 0));
                     }
                 }
 
@@ -71,5 +72,4 @@ public class user_resturantmenue extends AppCompatActivity {
             }
         });
     }
-
 }

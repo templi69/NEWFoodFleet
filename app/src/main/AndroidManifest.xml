@@ -26,7 +26,18 @@
             android:exported="false" />
         <activity
             android:name=".UserSignup"
+            android:name=".RiderOrderDetailActivity"
             android:exported="false" />
+        <activity
+            android:name=".RiderSignupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RiderMapActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RiderDashboardActivity"
+            android:exported="false" />
+
         <activity
             android:name=".RiderDashboard"
             android:exported="false" />

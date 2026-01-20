@@ -18,8 +18,8 @@ public class RiderDashboardActivity extends AppCompatActivity {
     ListView listOrders;
     Button btnAccept;
 
-    ArrayList<String> orders = new ArrayList<>();      // Order display text
-    ArrayList<String> orderIds = new ArrayList<>();    // Order IDs from Firebase
+    ArrayList<String> orders = new ArrayList<>();   // Text shown in list
+    ArrayList<String> orderIds = new ArrayList<>(); // Firebase order IDs
     int selectedIndex = -1;
 
     DatabaseReference orderRef;
@@ -34,18 +34,18 @@ public class RiderDashboardActivity extends AppCompatActivity {
 
         orderRef = FirebaseDatabase.getInstance().getReference("Orders");
 
-        //  Load only restaurant accepted orders
+        //  Load only Accepted orders (by restaurant)
         orderRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 orders.clear();
                 orderIds.clear();
+                selectedIndex = -1;
 
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     String status = ds.child("status").getValue(String.class);
 
-                    // Only show orders accepted by restaurant
-                    if ("Accepted".equals(status)) {
+                    if ("Accepted".equalsIgnoreCase(status)) {
                         orderIds.add(ds.getKey());
 
                         String restaurant = ds.child("restaurantName").getValue(String.class);
@@ -55,44 +55,47 @@ public class RiderDashboardActivity extends AppCompatActivity {
                     }
                 }
 
-                // Show in single-choice ListView
-                listOrders.setAdapter(new ArrayAdapter<>(
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
                         RiderDashboardActivity.this,
                         android.R.layout.simple_list_item_single_choice,
                         orders
-                ));
+                );
+
+                listOrders.setAdapter(adapter);
             }
 
             @Override
             public void onCancelled(DatabaseError error) {}
         });
 
-        //  Select an order from list
+        //  Select order ONLY (no navigation here)
         listOrders.setOnItemClickListener((parent, view, position, id) -> {
             selectedIndex = position;
-
-            // Open RiderOrderDetailActivity on click
-            String orderId = orderIds.get(position);
-            Intent intent = new Intent(RiderDashboardActivity.this,
-                    RiderOrderDetailActivity.class);
-            intent.putExtra("orderId", orderId);
-            startActivity(intent);
+            Toast.makeText(this, "Order Selected", Toast.LENGTH_SHORT).show();
         });
 
-        //  Accept button logic
+        //  Accept order button
         btnAccept.setOnClickListener(v -> {
             if (selectedIndex == -1) {
-                Toast.makeText(this, "Select an order first", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please select an order first", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             String orderId = orderIds.get(selectedIndex);
 
-            // Update order status in Firebase
+            // Update Firebase
             orderRef.child(orderId).child("status").setValue("Picked");
-            orderRef.child(orderId).child("riderId").setValue("demo_rider"); // replace with UID later
+            orderRef.child(orderId).child("riderId").setValue("demo_rider");
 
             Toast.makeText(this, "Order Accepted", Toast.LENGTH_SHORT).show();
+
+            // Open order details AFTER accept
+            Intent intent = new Intent(
+                    RiderDashboardActivity.this,
+                    RiderOrderDetailActivity.class
+            );
+            intent.putExtra("orderId", orderId);
+            startActivity(intent);
         });
     }
 }

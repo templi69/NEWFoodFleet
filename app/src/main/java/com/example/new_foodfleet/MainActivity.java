@@ -19,6 +19,10 @@ public class MainActivity extends AppCompatActivity {
                 ))
         );
 
+
+        findViewById(R.id.btnUser).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, UserSignup.class))
+        );
         // Rider Signup
         findViewById(R.id.btnRider).setOnClickListener(v ->
                 startActivity(new Intent(
@@ -26,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
                         RiderSignupActivity.class
                 ))
         );
-        findViewById(R.id.btnUser).setOnClickListener(v ->
-                startActivity(new Intent(MainActivity.this, UserSignup.class))
-        );
+
     }
 }

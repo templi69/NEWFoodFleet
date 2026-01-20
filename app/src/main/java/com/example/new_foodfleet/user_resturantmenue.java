@@ -56,7 +56,7 @@ public class user_resturantmenue extends AppCompatActivity {
                     String name = ds.child("itemName").getValue(String.class);
                     String priceStr = ds.child("price").getValue(String.class);
 
-                    // ✅ Correct: price is String in Firebase
+                    //  Correct: price is String in Firebase
                     if (name != null && priceStr != null) {
                         menuList.add(new MenueItemModel(name, priceStr, 0));
                     }

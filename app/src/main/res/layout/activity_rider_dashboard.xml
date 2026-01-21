@@ -1,13 +1,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:padding="10dp"
+    android:background="@color/bg_dark"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:text="Rider Panel"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
     <!-- Rider Orders List -->
     <ListView
         android:id="@+id/listOrders"
         android:choiceMode="singleChoice"
+        android:textColor="@color/white"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>

@@ -39,12 +39,10 @@ public class RestaurantSignupActivity extends AppCompatActivity {
             String email = etEmail.getText().toString().trim();
             String pass = etPassword.getText().toString().trim();
 
-
             if (name.isEmpty() || email.isEmpty() || pass.isEmpty() || pass.length() < 6) {
                 Toast.makeText(this, "Please fill all fields correctly", Toast.LENGTH_SHORT).show();
                 return;
             }
-
 
             auth.createUserWithEmailAndPassword(email, pass)
                     .addOnCompleteListener(task -> {
@@ -53,9 +51,10 @@ public class RestaurantSignupActivity extends AppCompatActivity {
                             if (user != null) {
                                 String uid = user.getUid();
 
-
-                                db.child("Users").child(uid).child("role").setValue("restaurant");
-                                db.child("Restaurants").child(uid).child("name").setValue(name)
+                                // SAVE IN RESTAURANTS ONLY
+                                db.child("Restaurants").child(uid).child("role").setValue("restaurant");
+                                db.child("Restaurants").child(uid).child("name").setValue(name);
+                                db.child("Restaurants").child(uid).child("email").setValue(email)
                                         .addOnCompleteListener(dbTask -> {
                                             if (dbTask.isSuccessful()) {
                                                 Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show();

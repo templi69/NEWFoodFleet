@@ -18,6 +18,9 @@
             android:name=".usercart"
             android:exported="false" />
         <activity
+            android:name=".UserSignup"
+            android:exported="false" />
+        <activity
             android:name=".MenueItemModel"
             android:exported="false"
             tools:ignore="Instantiatable" />
@@ -28,21 +31,29 @@
             android:name=".UserDashboard"
             android:exported="false" />
         <activity
-            android:name=".UserSignup"
+            android:name=".RiderOrderDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".RiderDashboard"
+            android:name=".RiderSignupActivity"
             android:exported="false" />
         <activity
-            android:name=".RiderSignup"
+            android:name=".RiderDashboardActivity"
             android:exported="false" />
+
         <activity
-            android:name=".RiderLogin"
-            android:exported="false" />
-        <activity
-            android:name=".ui.login.LoginRiderActivity"
+            android:name=".RiderDashboardActivity"
             android:exported="false"
-            android:label="@string/title_activity_login_rider" />
+            tools:ignore="DuplicateActivity" />
+        <activity
+            android:name=".RiderSignupActivity"
+            android:exported="false"
+            tools:ignore="DuplicateActivity" />
+        <activity
+            android:name=".RiderOrderDetailActivity"
+            android:exported="false"
+            tools:ignore="DuplicateActivity" />
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

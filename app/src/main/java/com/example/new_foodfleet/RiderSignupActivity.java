@@ -42,6 +42,12 @@ public class RiderSignupActivity extends AppCompatActivity {
             String email = etEmail.getText().toString().trim();
             String pass = etPassword.getText().toString().trim();
 
+            // Phone number validation
+            if (phone.length() != 11) {
+                Toast.makeText(this, "Phone number must be exactly 11 digits", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (name.isEmpty() || phone.isEmpty() || email.isEmpty() || pass.isEmpty() || pass.length() < 6) {
                 Toast.makeText(this, "Please fill all fields correctly", Toast.LENGTH_SHORT).show();
                 return;

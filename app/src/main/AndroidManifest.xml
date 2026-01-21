@@ -11,70 +11,74 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NEWFoodFleet">
-        <activity
-            android:name=".Singlelogin"
-            android:exported="false" />
-        <activity
-            android:name=".usercart"
-            android:exported="false" />
-        <activity
-            android:name=".UserSignup"
-            android:exported="false" />
-        <activity
-            android:name=".MenueItemModel"
-            android:exported="false"
-            tools:ignore="Instantiatable" />
-        <activity
-            android:name=".user_resturantmenue"
-            android:exported="false" />
-        <activity
-            android:name=".UserDashboard"
-            android:exported="false" />
-        <activity
-            android:name=".RiderOrderDetailActivity"
-            android:exported="false" />
-        <activity
-            android:name=".RiderSignupActivity"
-            android:exported="false" />
-        <activity
-            android:name=".RiderDashboardActivity"
-            android:exported="false" />
 
+        <!-- SPLASH SCREEN (LAUNCHER) -->
         <activity
-            android:name=".RiderDashboardActivity"
-            android:exported="false"
-            tools:ignore="DuplicateActivity" />
-        <activity
-            android:name=".RiderSignupActivity"
-            android:exported="false"
-            tools:ignore="DuplicateActivity" />
-        <activity
-            android:name=".RiderOrderDetailActivity"
-            android:exported="false"
-            tools:ignore="DuplicateActivity" />
-
-
-        <activity
-            android:name=".MainActivity"
+            android:name=".SplashScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- MAIN ENTRY (SIGNUP / LOGIN OPTIONS) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
+
+        <!-- SINGLE LOGIN (ROLE BASED) -->
+        <activity
+            android:name=".Singlelogin"
+            android:exported="false" />
+
+        <!-- USER FLOW -->
+        <activity
+            android:name=".UserSignup"
+            android:exported="false" />
+
+        <activity
+            android:name=".UserDashboard"
+            android:exported="false" />
+
+        <activity
+            android:name=".user_resturantmenue"
+            android:exported="false" />
+
+        <activity
+            android:name=".usercart"
+            android:exported="false" />
+
+        <!-- RESTAURANT FLOW -->
         <activity
             android:name=".RestaurantSignupActivity"
             android:exported="false" />
+
         <activity
             android:name=".RestaurantDashboardActivity"
             android:exported="false" />
+
         <activity
             android:name=".RestaurantOrderActivity"
             android:exported="false" />
+
         <activity
             android:name=".AddFoodActivity"
             android:exported="false" />
+
+        <!-- RIDER FLOW -->
+        <activity
+            android:name=".RiderSignupActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".RiderDashboardActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".RiderOrderDetailActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

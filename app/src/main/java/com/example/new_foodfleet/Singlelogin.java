@@ -20,7 +20,7 @@ public class Singlelogin extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_singlelogin);
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
@@ -91,7 +91,7 @@ public class Singlelogin extends AppCompatActivity {
                         if (snapshot.exists()) {
                             openRiderPanel();
                         } else {
-                            Toast.makeText(LoginActivity.this,
+                            Toast.makeText(Singlelogin.this,
                                     "Role not found", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -110,7 +110,7 @@ public class Singlelogin extends AppCompatActivity {
     }
 
     void openRiderPanel() {
-        startActivity(new Intent(this, RiderDashboard.class));
+        startActivity(new Intent(this, RiderDashboardActivity.class));
         finish();
     }
 }

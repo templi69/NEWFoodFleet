@@ -8,6 +8,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+
 
 public class RestaurantOrderActivity extends AppCompatActivity {
 
@@ -124,25 +128,49 @@ public class RestaurantOrderActivity extends AppCompatActivity {
         ordersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+
                 for (DataSnapshot orderSnap : snapshot.getChildren()) {
+
                     String status = orderSnap.child("status").getValue(String.class);
 
                     if (status != null && status.equals("pending")) {
+
                         String orderId = orderSnap.getKey();
 
+                        // 1️⃣ Update status in restaurant node
                         ordersRef.child(orderId).child("status").setValue("accepted");
 
+                        // 2️⃣ Prepare data for rider using HashMap
+                        Map<String, Object> orderData = new HashMap<>();
+
+                        orderData.put("status", "accepted");
+                        orderData.put("orderId", orderId);
+                        orderData.put("customerEmail",
+                                orderSnap.child("customerEmail").getValue());
+                        orderData.put("customerName",
+                                orderSnap.child("customerName").getValue());
+                        orderData.put("customerPhone",
+                                orderSnap.child("customerPhone").getValue());
+                        orderData.put("customerAddress",
+                                orderSnap.child("customerAddress").getValue());
+                        orderData.put("totalAmount",
+                                orderSnap.child("totalAmount").getValue());
+
+                        // OPTIONAL but recommended
+                        orderData.put("restaurantName", "My Restaurant");
+
+                        // 3️⃣ Send to RiderOrders
                         DatabaseReference riderRef = FirebaseDatabase.getInstance()
                                 .getReference("RiderOrders")
                                 .child(orderId);
 
-                        riderRef.setValue(orderSnap.getValue());
+                        riderRef.setValue(orderData);
 
                         Toast.makeText(RestaurantOrderActivity.this,
                                 "Order accepted and sent to rider",
                                 Toast.LENGTH_LONG).show();
 
-                        break;
+                        break; // accept only ONE order at a time
                     }
                 }
             }
@@ -155,4 +183,5 @@ public class RestaurantOrderActivity extends AppCompatActivity {
             }
         });
     }
+
 }

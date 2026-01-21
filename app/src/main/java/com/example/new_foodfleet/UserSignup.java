@@ -6,11 +6,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,7 +14,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class UserSignup extends AppCompatActivity {
-    EditText etuserName, etuserEmail, etuserPassword,etuserPhoneNumber;
+
+    EditText etuserName, etuserEmail, etuserPassword, etuserPhoneNumber;
     Button btnuserSignup;
 
     FirebaseAuth auth;
@@ -44,13 +41,10 @@ public class UserSignup extends AppCompatActivity {
             String userPhoneNumber = etuserPhoneNumber.getText().toString().trim();
             String userPassword = etuserPassword.getText().toString().trim();
 
-
-
-            if (userName.isEmpty() || userPhoneNumber.isEmpty()|| userEmail.isEmpty() || userPassword.isEmpty() || userPassword.length() < 6) {
+            if (userName.isEmpty() || userPhoneNumber.isEmpty() || userEmail.isEmpty() || userPassword.isEmpty() || userPassword.length() < 6) {
                 Toast.makeText(this, "Please fill all fields correctly", Toast.LENGTH_SHORT).show();
                 return;
             }
-
 
             auth.createUserWithEmailAndPassword(userEmail, userPassword)
                     .addOnCompleteListener(task -> {
@@ -59,10 +53,9 @@ public class UserSignup extends AppCompatActivity {
                             if (user != null) {
                                 String uid = user.getUid();
 
-
                                 db.child("Users").child(uid).child("role").setValue("user");
                                 db.child("Users").child(uid).child("name").setValue(userName);
-                                db.child("Users").child(uid).child("phonenum").setValue(userPhoneNumber)
+                                db.child("Users").child(uid).child("phone").setValue(userPhoneNumber)
                                         .addOnCompleteListener(dbTask -> {
                                             if (dbTask.isSuccessful()) {
                                                 Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show();

@@ -5,23 +5,22 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class usercart extends AppCompatActivity {
 
     ListView listCart;
     Button btnConfirmOrder;
-
     ArrayList<String> cartItems = new ArrayList<>();
     ArrayAdapter<String> adapter;
-
     DatabaseReference cartRef;
+
+    // Store context for inner classes
+    usercart myActivity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +33,11 @@ public class usercart extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1,
                 cartItems);
-
         listCart.setAdapter(adapter);
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        // Cart reference
         cartRef = FirebaseDatabase.getInstance()
                 .getReference("Users")
                 .child(userId)
@@ -56,23 +55,19 @@ public class usercart extends AppCompatActivity {
                 cartItems.clear();
 
                 for (DataSnapshot rest : snapshot.getChildren()) {
-                    for (DataSnapshot item : rest.getChildren()) {
+                    String restaurantName = rest.getKey();
 
+                    for (DataSnapshot item : rest.getChildren()) {
                         String name = item.child("itemName").getValue(String.class);
                         String priceStr = item.child("price").getValue(String.class);
-                        Long qtyLong = item.child("qty").getValue(Long.class);
+                        Long qty = item.child("qty").getValue(Long.class);
 
-                        if (name == null || priceStr == null || qtyLong == null) continue;
+                        if (name == null || priceStr == null || qty == null) continue;
 
-                        long price = 0;
-                        try {
-                            price = Long.parseLong(priceStr);
-                        } catch (Exception e) {
-                            price = 0;
-                        }
+                        long price = Long.parseLong(priceStr);
+                        long total = price * qty;
 
-                        long total = price * qtyLong;
-                        cartItems.add(name + " x" + qtyLong + " = Rs " + total);
+                        cartItems.add(restaurantName + ": " + name + " x" + qty + " = Rs " + total);
                     }
                 }
 
@@ -81,16 +76,13 @@ public class usercart extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Toast.makeText(usercart.this,
-                        "Failed to load cart",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(myActivity, "Failed to load cart", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // 🔥 CONFIRM ORDER LOGIC
+    // SIMPLE ORDER CONFIRM LOGIC
     void confirmOrder() {
-
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         cartRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -98,52 +90,56 @@ public class usercart extends AppCompatActivity {
             public void onDataChange(DataSnapshot snapshot) {
 
                 if (!snapshot.exists()) {
-                    Toast.makeText(usercart.this,
-                            "Cart is empty",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(myActivity, "Cart is empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                for (DataSnapshot rest : snapshot.getChildren()) {
+                // Loop through each restaurant in cart
+                for (DataSnapshot restaurantSnapshot : snapshot.getChildren()) {
 
-                    String restaurantId = rest.getKey();
+                    String restaurantId = restaurantSnapshot.getKey();
 
-                    DatabaseReference restOrdersRef = FirebaseDatabase.getInstance()
+                    // 1. Create order in Restaurant's node
+                    DatabaseReference restaurantOrdersRef = FirebaseDatabase.getInstance()
                             .getReference("Restaurants")
                             .child(restaurantId)
                             .child("orders");
 
-                    String orderId = restOrdersRef.push().getKey();
-                    if (orderId == null) return;
+                    String orderId = restaurantOrdersRef.push().getKey();
 
-                    // Order info
-                    restOrdersRef.child(orderId).child("userId").setValue(userId);
-                    restOrdersRef.child(orderId).child("status").setValue("pending");
-                    restOrdersRef.child(orderId).child("timestamp")
-                            .setValue(System.currentTimeMillis());
+                    // 2. Prepare order data
+                    HashMap<String, Object> orderData = new HashMap<>();
+                    orderData.put("orderId", orderId);
+                    orderData.put("userId", userId);
+                    orderData.put("restaurantId", restaurantId);
+                    orderData.put("status", "pending");
+                    orderData.put("timestamp", System.currentTimeMillis());
+                    orderData.put("items", restaurantSnapshot.getValue());
 
-                    // Order items
-                    restOrdersRef.child(orderId)
-                            .child("items")
-                            .setValue(rest.getValue());
+                    // Add customer info
+                    if (FirebaseAuth.getInstance().getCurrentUser().getEmail() != null) {
+                        orderData.put("customerEmail",
+                                FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                    }
 
-                    // Save order for user
+                    // 3. Save to Restaurant
+                    restaurantOrdersRef.child(orderId).setValue(orderData);
+
+                    // 4. Save to User's orders
                     DatabaseReference userOrdersRef = FirebaseDatabase.getInstance()
                             .getReference("Users")
                             .child(userId)
                             .child("orders")
                             .child(orderId);
 
-                    userOrdersRef.child("restaurantId").setValue(restaurantId);
-                    userOrdersRef.child("status").setValue("pending");
-                    userOrdersRef.child("items").setValue(rest.getValue());
+                    userOrdersRef.setValue(orderData);
                 }
 
-                // Clear cart
+                // 5. Clear cart
                 cartRef.removeValue();
 
-                Toast.makeText(usercart.this,
-                        "Order placed successfully!",
+                Toast.makeText(myActivity,
+                        "Order Placed Successfully!",
                         Toast.LENGTH_LONG).show();
 
                 finish();
@@ -151,9 +147,7 @@ public class usercart extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Toast.makeText(usercart.this,
-                        "Failed to place order",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(myActivity, "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -26,24 +26,49 @@ public class RiderOrderDetailActivity extends AppCompatActivity {
         tvDetails = findViewById(R.id.tvDetails);
         btnDelivered = findViewById(R.id.btnDelivered);
 
+        // REQUIRED extras
+        String userId = getIntent().getStringExtra("userId");
         String orderId = getIntent().getStringExtra("orderId");
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Orders").child(orderId);
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference userRef =
+                FirebaseDatabase.getInstance().getReference("Users").child(userId);
+
+        DatabaseReference orderRef =
+                userRef.child("orders").child(orderId);
+
+        // Load order + user info
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot ds) {
-                tvDetails.setText(
-                        ds.child("customerName").getValue(String.class) + "\n" +
-                                ds.child("customerAddress").getValue(String.class)
-                );
+            public void onDataChange(DataSnapshot userSnap) {
+
+                String name = userSnap.child("name").getValue(String.class);
+
+                orderRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot orderSnap) {
+
+                        String status = orderSnap.child("status").getValue(String.class);
+                        String items = orderSnap.child("items").getValue().toString();
+
+                        tvDetails.setText(
+                                "Customer: " + name + "\n" +
+                                        "Items: " + items + "\n" +
+                                        "Status: " + status
+                        );
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {}
+                });
             }
 
             @Override
             public void onCancelled(DatabaseError error) {}
         });
 
+        // Mark order delivered
         btnDelivered.setOnClickListener(v -> {
-            ref.child("status").setValue("Delivered");
+            orderRef.child("status").setValue("Delivered");
             Toast.makeText(this, "Order Delivered", Toast.LENGTH_SHORT).show();
         });
     }

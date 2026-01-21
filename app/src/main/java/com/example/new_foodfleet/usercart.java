@@ -57,6 +57,7 @@ public class usercart extends AppCompatActivity {
                 for (DataSnapshot rest : snapshot.getChildren()) {
                     String restaurantName = rest.getKey();
 
+
                     for (DataSnapshot item : rest.getChildren()) {
                         String name = item.child("itemName").getValue(String.class);
                         String priceStr = item.child("price").getValue(String.class);
@@ -98,11 +99,29 @@ public class usercart extends AppCompatActivity {
                 for (DataSnapshot restaurantSnapshot : snapshot.getChildren()) {
 
                     String restaurantId = restaurantSnapshot.getKey();
+                    long totalAmount = 0;
+                    // fetching restaurant name
+
+                    String restaurantName= restaurantSnapshot.child("restaurantName").getValue(String.class);
+
+
+                    // extra for calculating total price , personal debugging
+                    for (DataSnapshot item : restaurantSnapshot.getChildren()) {
+
+                        String priceStr = item.child("price").getValue(String.class);
+                        Long qty = item.child("qty").getValue(Long.class);
+
+                        if (priceStr != null && qty != null) {
+                            long price = Long.parseLong(priceStr);
+                            totalAmount += price * qty;
+                        }
+                    }
 
                     // 1. Create order in Restaurant's node
                     DatabaseReference restaurantOrdersRef = FirebaseDatabase.getInstance()
                             .getReference("Restaurants")
                             .child(restaurantId)
+
                             .child("orders");
 
                     String orderId = restaurantOrdersRef.push().getKey();
@@ -110,12 +129,13 @@ public class usercart extends AppCompatActivity {
                     // 2. Prepare order data
                     HashMap<String, Object> orderData = new HashMap<>();
                     orderData.put("orderId", orderId);
+                    orderData.put("restaurantName", restaurantName);
                     orderData.put("userId", userId);
                     orderData.put("restaurantId", restaurantId);
                     orderData.put("status", "pending");
                     orderData.put("timestamp", System.currentTimeMillis());
                     orderData.put("items", restaurantSnapshot.getValue());
-
+                    orderData.put("totalAmount", totalAmount);
                     // Add customer info
                     if (FirebaseAuth.getInstance().getCurrentUser().getEmail() != null) {
                         orderData.put("customerEmail",

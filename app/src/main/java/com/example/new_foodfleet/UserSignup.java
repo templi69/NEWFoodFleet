@@ -41,6 +41,11 @@ public class UserSignup extends AppCompatActivity {
             String userPhoneNumber = etuserPhoneNumber.getText().toString().trim();
             String userPassword = etuserPassword.getText().toString().trim();
 
+            if (userPhoneNumber.length() != 11) {
+                Toast.makeText(this, "Phone number must be exactly 11 digits", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (userName.isEmpty() || userPhoneNumber.isEmpty() || userEmail.isEmpty() || userPassword.isEmpty() || userPassword.length() < 6) {
                 Toast.makeText(this, "Please fill all fields correctly", Toast.LENGTH_SHORT).show();
                 return;

@@ -8,7 +8,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:text="Restaurant Panel"
+        android:text="User Panel"
         android:textSize="24sp"
         android:textColor="@color/white"
         android:textStyle="bold"

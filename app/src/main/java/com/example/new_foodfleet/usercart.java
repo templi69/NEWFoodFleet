@@ -102,7 +102,7 @@ public class usercart extends AppCompatActivity {
                     long totalAmount = 0;
                     // fetching restaurant name
 
-                    String restaurantName= restaurantSnapshot.child("restaurantName").getValue(String.class);
+                  //  String restaurantName= restaurantSnapshot.child("restaurantName").getValue(String.class);
 
 
                     // extra for calculating total price , personal debugging
@@ -129,7 +129,7 @@ public class usercart extends AppCompatActivity {
                     // 2. Prepare order data
                     HashMap<String, Object> orderData = new HashMap<>();
                     orderData.put("orderId", orderId);
-                    orderData.put("restaurantName", restaurantName);
+                    //orderData.put("restaurantName", restaurantName);
                     orderData.put("userId", userId);
                     orderData.put("restaurantId", restaurantId);
                     orderData.put("status", "pending");

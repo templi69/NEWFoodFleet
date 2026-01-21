@@ -1,5 +1,6 @@
 package com.example.new_foodfleet;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,68 +11,82 @@ import java.util.ArrayList;
 
 public class RestaurantOrderActivity extends AppCompatActivity {
 
-    ListView listOrders;
-    Button btnAcceptOrder;
+    ListView listView;
+    Button btnAccept;
 
-    ArrayList<String> orderList = new ArrayList<>();
-    ArrayList<String> orderIds = new ArrayList<>();
-
+    ArrayList<String> orders = new ArrayList<>();
     ArrayAdapter<String> adapter;
 
     DatabaseReference ordersRef;
-    String restaurantId = "restaurant1"; // 🔴 replace with actual logged-in restaurant ID
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_orders);
 
-        listOrders = findViewById(R.id.listOrders);
-        btnAcceptOrder = findViewById(R.id.btnAcceptOrder);
+        // Find views
+        listView = findViewById(R.id.listOrders);
+        btnAccept = findViewById(R.id.btnAcceptOrder);
 
-        adapter = new ArrayAdapter<>(
-                this,
+        // Setup adapter
+        adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1,
-                orderList
-        );
-        listOrders.setAdapter(adapter);
+                orders);
+        listView.setAdapter(adapter);
 
+        // Firebase reference
+        String restaurantId = "restaurant1"; // Your restaurant ID
         ordersRef = FirebaseDatabase.getInstance()
                 .getReference("Restaurants")
                 .child(restaurantId)
                 .child("orders");
 
+        // Load orders
         loadOrders();
 
-        btnAcceptOrder.setOnClickListener(v -> acceptFirstOrder());
+        // Accept button
+        btnAccept.setOnClickListener(v -> {
+            acceptOrder();
+        });
     }
 
     void loadOrders() {
         ordersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                orders.clear();
 
-                orderList.clear();
-                orderIds.clear();
+                // Check if data exists
+                if (!snapshot.exists()) {
+                    orders.add("No orders yet");
+                    adapter.notifyDataSetChanged();
+                    return;
+                }
 
+                // Loop through orders
                 for (DataSnapshot orderSnap : snapshot.getChildren()) {
-
                     String orderId = orderSnap.getKey();
                     String status = orderSnap.child("status").getValue(String.class);
 
-                    if (status == null || !status.equals("pending")) continue;
+                    // Show only pending orders
+                    if (status != null && status.equals("pending")) {
+                        String customer = orderSnap.child("customerEmail").getValue(String.class);
+                        Long total = orderSnap.child("totalAmount").getValue(Long.class);
 
-                    int totalItems = 0;
+                        // Create display string
+                        String display = "Order: " + orderId.substring(0, 6) +
+                                "\nCustomer: " + (customer != null ? customer : "Unknown") +
+                                "\nTotal: Rs " + (total != null ? total : 0) +
+                                "\nStatus: " + status;
 
-                    for (DataSnapshot item : orderSnap.child("items").getChildren()) {
-                        Long qty = item.child("qty").getValue(Long.class);
-                        if (qty != null) totalItems += qty;
+                        orders.add(display);
                     }
+                }
 
-                    orderIds.add(orderId);
-                    orderList.add("Order ID: " + orderId +
-                            "\nItems: " + totalItems +
-                            "\nStatus: Pending");
+                // If no pending orders
+                if (orders.isEmpty()) {
+                    orders.add("No pending orders");
                 }
 
                 adapter.notifyDataSetChanged();
@@ -80,43 +95,56 @@ public class RestaurantOrderActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError error) {
                 Toast.makeText(RestaurantOrderActivity.this,
-                        "Failed to load orders",
+                        "Error: " + error.getMessage(),
                         Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    void acceptFirstOrder() {
-
-        if (orderIds.isEmpty()) {
-            Toast.makeText(this, "No pending orders", Toast.LENGTH_SHORT).show();
+    void acceptOrder() {
+        // Check if there are orders
+        if (orders.isEmpty() || orders.get(0).equals("No pending orders")) {
+            Toast.makeText(this, "No orders to accept", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String orderId = orderIds.get(0);
+        // Find first pending order
+        ordersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot orderSnap : snapshot.getChildren()) {
+                    String status = orderSnap.child("status").getValue(String.class);
 
-        // 1️⃣ Update status in restaurant
-        ordersRef.child(orderId)
-                .child("status")
-                .setValue("accepted");
+                    if (status != null && status.equals("pending")) {
+                        String orderId = orderSnap.getKey();
 
-        // 2️⃣ Send order to Riders
-        DatabaseReference riderOrdersRef = FirebaseDatabase.getInstance()
-                .getReference("RiderOrders")
-                .child(orderId);
+                        // 1. Update status in restaurant
+                        ordersRef.child(orderId).child("status").setValue("accepted");
 
-        ordersRef.child(orderId).addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        riderOrdersRef.setValue(snapshot.getValue());
+                        // 2. Send to rider
+                        DatabaseReference riderRef = FirebaseDatabase.getInstance()
+                                .getReference("RiderOrders")
+                                .child(orderId);
+
+                        // Copy order data to rider
+                        riderRef.setValue(orderSnap.getValue());
+
                         Toast.makeText(RestaurantOrderActivity.this,
-                                "Order accepted & sent to rider",
+                                "Order accepted and sent to rider",
                                 Toast.LENGTH_LONG).show();
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError error) { }
-                });
+                        // Stop after accepting one order
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Toast.makeText(RestaurantOrderActivity.this,
+                        "Failed to accept order",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
